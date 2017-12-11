@@ -1,8 +1,15 @@
 package main.java;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -10,14 +17,17 @@ import javax.persistence.Table;
 public class Article {
 	@Id
 	private int id;
-	@Column(name="ref")
+	@Column(name="ref", length=30, nullable=false, unique=true)
 	private String ref;
-	@Column(name="designation")
+	@Column(name="designation", length=300, nullable=false)
 	private String designation;
-	@Column(name="prix")
+	@Column(name="prix", nullable=false)
 	private double prix;
-	@Column(name="id_fou")
-	private int id_fou;
+	@ManyToOne
+	@JoinColumn(name="id_fou")
+	private Fournisseur fourn;
+	@ManyToMany(mappedBy="articles")
+	private Set<Bon> bons;
 	
 	
 	public Article() {
@@ -25,12 +35,12 @@ public class Article {
 	}
 
 
-	public Article(int id, String ref, String designation, double prix, int id_fou) {
+	public Article(int id, String ref, String designation, double prix, Fournisseur fou) {
 		this.id = id;
 		this.ref = ref;
 		this.designation = designation;
 		this.prix = prix;
-		this.id_fou = id_fou;
+		this.fourn = fou;
 	}
 
 
@@ -74,17 +84,27 @@ public class Article {
 	}
 
 
-	public int getId_fou() {
-		return id_fou;
+	public Fournisseur getFournisseur() {
+		return fourn;
 	}
 
 
-	public void setId_fou(int id_fou) {
-		this.id_fou = id_fou;
+	public void setFournisseur(Fournisseur fou) {
+		this.fourn = fou;
 	}
 	
+	public Set<Bon> getBons() {
+		return bons;
+	}
+
+
+	public void setBons(Set<Bon> bons) {
+		this.bons = bons;
+	}
+
+
 	public String toString() {
-		return String.format("Article %2d (%s) : %s - %2.2f€ - Fournisseur %d", id, ref, designation, prix, id_fou);
+		return String.format("Article %2d (%s) : %s - %2.2f€ - %s", id, ref, designation, prix, fourn.getNom());
 	}
 	
 	

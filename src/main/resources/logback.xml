@@ -6,12 +6,22 @@
 			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
+	
+	<appender name="NONE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%msg%n</pattern>
+		</encoder>
+	</appender>
 
 	
 	<!-- politique de log pour les classes du package dev.console -->
-	<logger name="dev.console" level="INFO">
-		<appender-ref ref="STDOUTT" />
+	<logger name="org.hibernate" level="ERROR" additivity="false">
+		<appender-ref ref="STDOUT" />
 	</logger>
+	
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
 
 
 </configuration>

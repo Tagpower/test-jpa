@@ -17,17 +17,42 @@ public class TestJpa {
 	public static void main(String[] args) {
 		EntityManagerFactory emfact = Persistence.createEntityManagerFactory("pu_essai");
 		EntityManager em = emfact.createEntityManager();
+			
+		//Query 1 : Liste des articles
+		TypedQuery<Article> q1 = em.createQuery("SELECT a from Article a", Article.class);
 		
-		//TODO requête native pr avoir la liste des articles
-		
-		TypedQuery<Article> q = em.createQuery("SELECT a from Article a", Article.class);
-		//TODO afficher le resultat
-		
-		List<Article> result = q.getResultList();
+		List<Article> result = q1.getResultList();
 		
 		for (Article a : result) {
 			LOG.info(a.toString());
 		}
+		
+		//Query 2 : Article selon une référence
+		TypedQuery<Article> q2 = em.createQuery("SELECT a from Article a WHERE ref=:reference", Article.class);
+		q2.setParameter("reference", "A01");
+		
+		Article result2 = q2.getSingleResult();
+		LOG.info("Résultat de la requête 2 : " + result2.toString());
+		
+		
+		//Query 3 : Un bon de commande et ses articles
+		TypedQuery<Bon> q3 = em.createQuery("SELECT b FROM Bon b where id=:id", Bon.class);
+		
+		for(int i=1; i<7; i++) {
+			q3.setParameter("id", i);
+
+			Bon result3 = q3.getSingleResult();
+			
+			LOG.info("Bon de commande " + result3.getNumero());
+			for (Article a : result3.getArticles()) {
+				LOG.info(a.toString());
+			}
+		}
+
+		
+		
+
+		
 		
 		em.close();
 		emfact.close();
